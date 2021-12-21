@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from django.views import View
+from decimal import Decimal
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Branch, Bank, Transaction, Account
+from .models import Branch, Bank, Transaction, Account, TransactionType
 from .serializers import BankSerializer, AccountSerializer, BranchSerializer, TransactionSerializer
 
 
@@ -141,15 +141,25 @@ def get_transaction_details(request, pk):
 
 @api_view(['POST'])
 def make_transaction(request):
+
+    account = Account.objects.get(id=request.data.get('account'))
+    transaction_amount = Decimal(request.data.get('amount'))
+
+    transaction_type = request.data.get('type')
+
+    if transaction_type == TransactionType.DEPOSIT.value:
+        account.balance += transaction_amount
+    elif transaction_type == TransactionType.WITHDRAW.value and transaction_amount < account.balance:
+        account.balance -= transaction_amount
+    else:
+        return Response("You Have No Limit For This Transaction")
+
+    account.save()
+
     serializer = TransactionSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
+
     return Response(serializer.data)
 
-
-@api_view(['DELETE'])
-def delete_transactions(request, pk):
-    transaction = Transaction.objects.get(id=pk)
-    transaction.delete()
-    return Response('transaction Deleted Successfully')
 

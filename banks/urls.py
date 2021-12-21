@@ -8,7 +8,7 @@ urlpatterns = [
     path('bank/create', views.create_bank, name='add-bank'),
     path('bank/update/<int:pk>', views.update_bank_details, name='update-bank'),
     path('bank/delete/<int:pk>', views.delete_bank, name='delete-bank'),
-    path('acount/list', views.account_listing, name='account-listing'),
+    path('account/list', views.account_listing, name='account-listing'),
     path('account/details/<int:pk>', views.get_account_details, name='account-details'),
     path('account/create', views.create_account, name='add-account'),
     path('account/update/<int:pk>', views.update_account_details, name='update-account'),
@@ -18,4 +18,6 @@ urlpatterns = [
     path('branch/create', views.create_branch, name='add-branch'),
     path('branch/update/<int:pk>', views.update_branch_details, name='update-branch'),
     path('branch/delete/<int:pk>', views.delete_branch, name='update-branch'),
+    path('transaction/make', views.make_transaction, name='make-branch'),
+    path('transaction/list', views.transaction_listing, name='list-transaction'),
 ]
