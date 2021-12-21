@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="217d0ce0-e431-432d-b462-4d37d26856d5" name="Changes" comment="" />
+    <list default="true" id="287feacc-222a-421e-8134-6e6cb08ce032" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/banks/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/banks/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transactionssystem/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/transactionssystem/settings.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

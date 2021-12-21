@@ -7,8 +7,8 @@ from django.db import models
 class UserRoll(Enum):
     USER = 'user'
     ADMIN = 'admin'
-    choice = ((USER, 'User'), (ADMIN, 'Admin'))
+    choices = ((USER, 'User'), (ADMIN, 'Admin'))
 
 
 class User(AbstractUser):
-    type = models.CharField(choices=UserRoll.choice)
+    type = models.CharField(max_length=150, choices=UserRoll.choices.value)
