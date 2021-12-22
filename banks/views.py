@@ -2,16 +2,14 @@ from decimal import Decimal
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 from .models import Branch, Bank, Transaction, Account, TransactionType
 from .serializers import BankSerializer, AccountSerializer, BranchSerializer, TransactionSerializer
 
 
-# Create your views here.
-
-
 @api_view(['GET'])
-def banks_listing(request):
+def get_banks(request):
     banks = Bank.objects.all()
     serializer = BankSerializer(banks, many=True)
     return Response(serializer.data)
@@ -19,8 +17,8 @@ def banks_listing(request):
 
 @api_view(['GET'])
 def get_bank_details(request, pk):
-    bank = Bank.objects.get(id=pk)
-    serializer = BankSerializer(bank, many=False)
+    bank = get_object_or_404(Bank, id=pk)
+    serializer = BankSerializer(bank)
     return Response(serializer.data)
 
 
@@ -34,7 +32,7 @@ def create_bank(request):
 
 @api_view(['PUT'])
 def update_bank_details(request, pk):
-    bank = Bank.objects.get(id=pk)
+    bank = get_object_or_404(Bank, id=pk)
     serializer = BankSerializer(instance=bank, data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -43,14 +41,13 @@ def update_bank_details(request, pk):
 
 @api_view(['DELETE'])
 def delete_bank(request, pk):
-    bank = Bank.objects.get(id=pk)
+    bank = get_object_or_404(Bank, id=pk)
     bank.delete()
     return Response('bank Deleted Successfully')
 
 
-
 @api_view(['GET'])
-def branch_listing(request):
+def get_branches(request):
     branch = Branch.objects.all()
     serializer = BranchSerializer(branch, many=True)
     return Response(serializer.data)
@@ -58,8 +55,8 @@ def branch_listing(request):
 
 @api_view(['GET'])
 def get_branch_details(request, pk):
-    branch = Branch.objects.get(id=pk)
-    serializer = BranchSerializer(branch, many=False)
+    branch = get_object_or_404(Branch, id=pk)
+    serializer = BranchSerializer(branch)
     return Response(serializer.data)
 
 
@@ -73,7 +70,7 @@ def create_branch(request):
 
 @api_view(['PUT'])
 def update_branch_details(request, pk):
-    branch = Branch.objects.get(id=pk)
+    branch = get_object_or_404(Branch, id=pk)
     serializer = BranchSerializer(instance=branch, data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -82,13 +79,13 @@ def update_branch_details(request, pk):
 
 @api_view(['DELETE'])
 def delete_branch(request, pk):
-    branch = Branch.objects.get(id=pk)
+    branch = get_object_or_404(Branch, id=pk)
     branch.delete()
     return Response('branch Deleted Successfully')
 
 
 @api_view(['GET'])
-def account_listing(request):
+def get_accounts(request):
     accounts = Account.objects.all()
     serializer = AccountSerializer(accounts, many=True)
     return Response(serializer.data)
@@ -96,8 +93,8 @@ def account_listing(request):
 
 @api_view(['GET'])
 def get_account_details(request, pk):
-    account = Account.objects.get(id=pk)
-    serializer = AccountSerializer(account, many=False)
+    account = get_bank_details(Account, id=pk)
+    serializer = AccountSerializer(account)
     return Response(serializer.data)
 
 
@@ -111,7 +108,7 @@ def create_account(request):
 
 @api_view(['PUT'])
 def update_account_details(request, pk):
-    account = Account.objects.get(id=pk)
+    account = get_object_or_404(Account, id=pk)
     serializer = AccountSerializer(instance=account, data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -120,13 +117,13 @@ def update_account_details(request, pk):
 
 @api_view(['DELETE'])
 def delete_account(request, pk):
-    account = Account.objects.get(id=pk)
+    account = get_object_or_404(Account, id=pk)
     account.delete()
     return Response('account Deleted Successfully')
 
 
 @api_view(['GET'])
-def transaction_listing(request):
+def get_transactions(request):
     transactions = Transaction.objects.all()
     serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data)
@@ -134,32 +131,34 @@ def transaction_listing(request):
 
 @api_view(['GET'])
 def get_transaction_details(request, pk):
-    transaction = Transaction.objects.get(id=pk)
-    serializer = TransactionSerializer(transaction, many=False)
+    transaction = get_object_or_404(Transaction, id=pk)
+    serializer = TransactionSerializer(transaction)
     return Response(serializer.data)
 
 
 @api_view(['POST'])
 def make_transaction(request):
 
-    account = Account.objects.get(id=request.data.get('account'))
-    transaction_amount = Decimal(request.data.get('amount'))
-
+    account = get_object_or_404(Account, id=request.data.get('account'))
     transaction_type = request.data.get('type')
+
+    serializer = TransactionSerializer(data=request.data)
+    transaction_amount = serializer.validate_amount(account.balance)
 
     if transaction_type == TransactionType.DEPOSIT.value:
         account.balance += transaction_amount
-    elif transaction_type == TransactionType.WITHDRAW.value and transaction_amount < account.balance:
+    elif transaction_type == TransactionType.WITHDRAW.value:
         account.balance -= transaction_amount
-    else:
-        return Response("You Have No Limit For This Transaction")
 
     account.save()
 
-    serializer = TransactionSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
 
     return Response(serializer.data)
 
 
+def check_amount_limit(amount, balance):
+    if amount < balance:
+        return True
+    return False
