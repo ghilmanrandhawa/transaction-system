@@ -142,7 +142,7 @@ def make_transaction(request):
     transaction_type = request.data.get('type')
 
     serializer = TransactionSerializer(data=request.data)
-    transaction_amount = serializer.initial_data['amount']
+    transaction_amount = Decimal(serializer.initial_data['amount'])
 
     if transaction_type == TransactionType.DEPOSIT.value:
         account.balance += transaction_amount
