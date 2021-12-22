@@ -138,16 +138,16 @@ def get_transaction_details(request, pk):
 
 @api_view(['POST'])
 def make_transaction(request):
-
     account = get_object_or_404(Account, id=request.data.get('account'))
     transaction_type = request.data.get('type')
 
     serializer = TransactionSerializer(data=request.data)
-    transaction_amount = serializer.validate_amount(account.balance)
+    transaction_amount = serializer.initial_data['amount']
 
     if transaction_type == TransactionType.DEPOSIT.value:
         account.balance += transaction_amount
     elif transaction_type == TransactionType.WITHDRAW.value:
+        transaction_amount = serializer.validate_amount(account.balance)
         account.balance -= transaction_amount
 
     account.save()
@@ -156,9 +156,3 @@ def make_transaction(request):
         serializer.save()
 
     return Response(serializer.data)
-
-
-def check_amount_limit(amount, balance):
-    if amount < balance:
-        return True
-    return False
