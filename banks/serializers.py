@@ -1,8 +1,7 @@
-from decimal import Decimal
-
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
-from .models import Bank, Branch, Account, Transaction
+from .models import Bank, Branch, Account, Transaction, TransactionType
 
 
 class BankSerializer(serializers.ModelSerializer):
@@ -28,7 +27,9 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = '__all__'
 
-    def validate_amount(self, balance):
-        if Decimal(self.initial_data['amount']) > balance:
-            raise serializers.ValidationError("You Have No Limit For This Transaction")
-        return Decimal(self.initial_data['amount'])
+    def validate_amount(self, value):
+        account_balance = Account.objects.get(id=self.initial_data['account']).balance
+        if self.initial_data['type'] == TransactionType.WITHDRAW.value:
+            if value > account_balance:
+                raise ValidationError("You have no limit for this transaction")
+        return value

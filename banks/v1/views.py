@@ -144,15 +144,14 @@ def make_transaction(request):
     serializer = TransactionSerializer(data=request.data)
     transaction_amount = Decimal(serializer.initial_data['amount'])
 
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+
     if transaction_type == TransactionType.DEPOSIT.value:
         account.balance += transaction_amount
     elif transaction_type == TransactionType.WITHDRAW.value:
-        transaction_amount = serializer.validate_amount(account.balance)
         account.balance -= transaction_amount
 
     account.save()
-
-    if serializer.is_valid():
-        serializer.save()
 
     return Response(serializer.data)
