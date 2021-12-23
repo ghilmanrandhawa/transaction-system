@@ -147,11 +147,7 @@ def make_transaction(request):
     if serializer.is_valid(raise_exception=True):
         serializer.save()
 
-    if transaction_type == TransactionType.DEPOSIT.value:
-        account.balance += transaction_amount
-    elif transaction_type == TransactionType.WITHDRAW.value:
-        account.balance -= transaction_amount
-
+    account.update_balance(transaction_type, transaction_amount)
     account.save()
 
     return Response(serializer.data)
