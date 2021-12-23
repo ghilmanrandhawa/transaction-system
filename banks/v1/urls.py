@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from banks.v1 import views
 
 urlpatterns = [
     path('banks/', views.get_banks, name='bank_listing'),

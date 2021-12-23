@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from .models import Branch, Bank, Transaction, Account, TransactionType
-from .serializers import BankSerializer, AccountSerializer, BranchSerializer, TransactionSerializer
+from banks.models import Branch, Bank, Transaction, Account, TransactionType
+from banks.serializers import BankSerializer, AccountSerializer, BranchSerializer, TransactionSerializer
 
 
 @api_view(['GET'])
