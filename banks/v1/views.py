@@ -142,12 +142,11 @@ def make_transaction(request):
     transaction_type = request.data.get('type')
 
     serializer = TransactionSerializer(data=request.data)
-    transaction_amount = Decimal(serializer.initial_data['amount'])
 
     if serializer.is_valid(raise_exception=True):
+        account.update_balance(transaction_type, Decimal(serializer.validated_data.get('amount')))
         serializer.save()
 
-    account.update_balance(transaction_type, transaction_amount)
     account.save()
 
     return Response(serializer.data)
