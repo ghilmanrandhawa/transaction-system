@@ -35,11 +35,11 @@ class Account(models.Model):
     created_by = models.ForeignKey(User, related_name='created_accounts', on_delete=models.CASCADE)
     modified_by = models.ForeignKey(User, related_name='modified_accounts', on_delete=models.CASCADE)
 
-    def update_balance(self, type, amount):
-        if type == TransactionType.WITHDRAW.value:
-            self.balance -= amount
-        elif type == TransactionType.DEPOSIT.value:
-            self.balance += amount
+    def update_balance(self, transaction_type, transaction_amount):
+        if transaction_type == TransactionType.WITHDRAW.value:
+            self.balance -= transaction_amount
+        elif transaction_type == TransactionType.DEPOSIT.value:
+            self.balance += transaction_amount
 
 
 class TransactionType(Enum):
