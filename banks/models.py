@@ -6,7 +6,14 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class ModelMixin(models.Model):
+class SoftDeleteMixin(models.Model):
+    is_delete = models.BooleanField(null=True, default=False)
+
+    class Meta:
+        abstract = True
+
+
+class AuditMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='created_%(class)ss', on_delete=models.CASCADE)
@@ -16,31 +23,27 @@ class ModelMixin(models.Model):
         abstract = True
 
 
-class Bank(ModelMixin):
+class BaseModelMixin(AuditMixin, SoftDeleteMixin):
+    class Meta:
+        abstract = True
+
+
+class Bank(BaseModelMixin):
     name = models.CharField(max_length=255)
 
-    class Meta(ModelMixin.Meta):
-        db_table = 'banks'
 
-
-class Branch(ModelMixin):
+class Branch(BaseModelMixin):
     name = models.CharField(max_length=255)
     code = models.IntegerField()
     bank = models.ForeignKey('Bank', related_name='branches', on_delete=models.CASCADE)
 
-    class Meta(ModelMixin.Meta):
-        db_table = 'branches'
 
-
-class Account(ModelMixin):
+class Account(BaseModelMixin):
     user = models.ForeignKey(User, related_name='Accounts', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     number = models.IntegerField()
     balance = models.DecimalField(max_digits=22, decimal_places=2)
     branch = models.ForeignKey('Branch', related_name='Accounts', on_delete=models.CASCADE)
-
-    class Meta(ModelMixin.Meta):
-        db_table = 'accounts'
 
     def update_balance(self, account_type, amount):
         if account_type == TransactionType.WITHDRAW.value:
@@ -57,12 +60,9 @@ class TransactionType(Enum):
     choices = ((WITHDRAW, 'Withdraw'), (DEPOSIT, 'deposit'))
 
 
-class Transaction(ModelMixin):
+class Transaction(BaseModelMixin):
     user = models.ForeignKey(User, related_name='transactions', on_delete=models.CASCADE)
     type = models.CharField(max_length=150, choices=TransactionType.choices.value)
     account = models.ForeignKey('Account', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=22, decimal_places=2)
     branch = models.ForeignKey('Branch', on_delete=models.CASCADE)
-
-    class Meta(ModelMixin.Meta):
-        db_table = 'transactions'
