@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class SoftDeleteMixin(models.Model):
-    is_delete = models.BooleanField(null=True, default=False)
+    is_active = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
