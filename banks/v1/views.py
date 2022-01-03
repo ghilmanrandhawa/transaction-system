@@ -147,6 +147,4 @@ def make_transaction(request):
         account.update_balance(transaction_type, Decimal(serializer.validated_data.get('amount')))
         serializer.save()
 
-    account.save()
-
     return Response(serializer.data)
