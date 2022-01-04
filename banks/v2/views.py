@@ -8,8 +8,7 @@ from banks.models import Branch, Bank, Transaction, Account, TransactionType
 from banks.serializers import BankSerializer, AccountSerializer, BranchSerializer, TransactionSerializer
 
 
-class BankApi(APIView):
-
+class BankAPI(APIView):
     def get(self, request):
         banks = Bank.objects.filter(is_active=True)
         bank_serializer = BankSerializer(banks, many=True)
@@ -23,7 +22,7 @@ class BankApi(APIView):
         return Response(bank_serializer.data)
 
 
-class BankDetailsAPi(APIView):
+class BankDetailsAPI(APIView):
     def get(self, request, bank_id):
         bank = get_object_or_404(Bank, id=bank_id, is_active=True)
         bank_serializer = BankSerializer(bank)
@@ -44,14 +43,14 @@ class BankDetailsAPi(APIView):
         return Response("Bank Deleted Successfully")
 
 
-class BranchApi(APIView):
-    def get(self, request, bank_id=None):
+class BranchAPI(APIView):
+    def get(self, request, bank_id):
         bank = get_object_or_404(Bank, id=bank_id)
         branches = bank.branches.filter(is_active=True)
         branch_serializer = BranchSerializer(branches, many=True)
         return Response(branch_serializer.data)
 
-    def post(self, request):
+    def post(self, request, bank_id):
         branch_serializer = BranchSerializer(data=request.data)
         if branch_serializer.is_valid():
             branch_serializer.save()
@@ -59,7 +58,7 @@ class BranchApi(APIView):
         return Response(branch_serializer.data)
 
 
-class BranchDetailsApi(APIView):
+class BranchDetailsAPI(APIView):
     def get(self, request, branch_id):
         branch = get_object_or_404(Branch, id=branch_id, is_active=True)
         branch_serializer = BranchSerializer(branch)
@@ -80,7 +79,7 @@ class BranchDetailsApi(APIView):
         return Response('branch Deleted SuccessFully')
 
 
-class AccountApi(APIView):
+class AccountAPI(APIView):
     def get(self, request, branch_id):
         branch = get_object_or_404(Branch, id=branch_id)
         accounts = branch.Accounts.filter(is_active=True)
@@ -95,7 +94,7 @@ class AccountApi(APIView):
         return Response(account_serializer.data)
 
 
-class AccountDetailsApi(APIView):
+class AccountDetailsAPI(APIView):
     def get(self, request, account_id):
         account = get_object_or_404(Account, id=account_id, is_active=True)
         account_serializer = AccountSerializer(account)
@@ -116,7 +115,7 @@ class AccountDetailsApi(APIView):
         return Response("account Deleted SuccessFully")
 
 
-class TransactionApi(APIView):
+class TransactionAPI(APIView):
     def get(self, request, account_id):
         account = get_object_or_404(Account, id=account_id, is_active=True)
         transactions = account.transaction_set.filter(is_active=True)
@@ -136,7 +135,7 @@ class TransactionApi(APIView):
         return Response(transaction_serializer.data)
 
 
-class TransactionDetailsApi(APIView):
+class TransactionDetailsAPI(APIView):
     def get(self, request, transaction_id):
         transaction = get_object_or_404(Transaction, id=transaction_id, is_active=True)
         transaction_serializer = TransactionSerializer(transaction)
