@@ -14,7 +14,7 @@ class SoftDeleteMixin(models.Model):
 
     def delete(self):
         self.is_active = False
-        self.save()
+        self.save(update_fields=['is_active'])
 
 
 class AuditMixin(models.Model):

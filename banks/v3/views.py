@@ -57,6 +57,7 @@ class BranchUpdateDeleteAPI(mixins.UpdateModelMixin,
                             mixins.RetrieveModelMixin,
                             mixins.DestroyModelMixin,
                             generics.GenericAPIView):
+
     queryset = Branch.objects.filter(is_active=True)
     serializer_class = BranchSerializer
 
