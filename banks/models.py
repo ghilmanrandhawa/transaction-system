@@ -12,7 +12,7 @@ class SoftDeleteMixin(models.Model):
     class Meta:
         abstract = True
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self):
         self.is_active = False
         self.save()
 
