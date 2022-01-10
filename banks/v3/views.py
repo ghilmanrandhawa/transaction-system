@@ -17,7 +17,7 @@ class BankListCreateAPI(mixins.ListModelMixin, mixins.CreateModelMixin, generics
         return self.create(request)
 
 
-class BankUpdateDeleteApi(mixins.RetrieveModelMixin,
+class BankUpdateDeleteAPI(mixins.RetrieveModelMixin,
                           mixins.UpdateModelMixin,
                           mixins.DestroyModelMixin,
                           generics.GenericAPIView
