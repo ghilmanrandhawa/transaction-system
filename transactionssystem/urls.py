@@ -22,4 +22,5 @@ urlpatterns = [
     path('v1/', include('banks.v1.urls')),
     path('v2/', include('banks.v2.urls')),
     path('v3/', include('banks.v3.urls')),
+    path('v4/', include('banks.v4.urls')),
 ]
