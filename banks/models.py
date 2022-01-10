@@ -12,6 +12,10 @@ class SoftDeleteMixin(models.Model):
     class Meta:
         abstract = True
 
+    def delete(self):
+        self.is_active = False
+        self.save(update_fields=['is_active'])
+
 
 class AuditMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
