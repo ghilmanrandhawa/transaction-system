@@ -1,21 +1,15 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from banks.v5 import views
 
+router = DefaultRouter()
+
+router.register('banks', views.BankAPI, basename='banks')
+router.register(r'bank/(?P<bank_id>[^/.]+)/branches', views.BranchAPI, basename='branches')
+router.register('branch/(?P<branch_id>[^/.]+)/accounts', views.AccountAPI, basename='accounts')
+router.register('account/(?P<account_id>[^/.]+)/transactions', views.TransactionAPI, basename='accounts')
+
 urlpatterns = [
-    path('banks/', views.BankAPI.as_view({'get': 'list', 'post': 'create'}), name='bank_listing'),
-    path('bank/<int:pk>/', views.BankAPI.as_view({'get': 'retrieve',
-                                                  'put': 'update',
-                                                  'delete': 'destroy'}), name='bank_details'),
-    path('bank/<int:pk>/branches/', views.BranchAPI.as_view({'get': 'list', 'post': 'create'}), name='branch_listing'),
-    path('branch/<int:pk>/', views.BranchAPI.as_view({'get': 'retrieve',
-                                                      'put': 'update',
-                                                      'delete': 'destroy'}), name='branch_details'),
-    path('branch/<int:pk>/accounts/', views.AccountAPI.as_view({'get': 'list'}), name='account_listing'),
-    path('account/<int:pk>/', views.AccountAPI.as_view({'get': 'retrieve',
-                                                        'put': 'update',
-                                                        'delete': 'destroy'}), name='account_details'),
-    path('account/<int:pk>/transactions/', views.TransactionAPI.as_view({'get': 'list', 'post': 'create'}), name='transactions_list'),
-    path('transaction/<int:pk>/', views.TransactionAPI.as_view({'get': 'retrieve',
-                                                                'delete': 'destroy'}), name='transaction_details'),
-]
+    path('', include(router.urls)),
+    ]

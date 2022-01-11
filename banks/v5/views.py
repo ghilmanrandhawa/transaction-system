@@ -13,10 +13,10 @@ class BankAPI(viewsets.ModelViewSet):
 
 class BranchAPI(viewsets.ModelViewSet):
 
-    serializer_class = BankSerializer
+    serializer_class = BranchSerializer
 
     def get_queryset(self):
-        bank = get_object_or_404(Bank, id=self.kwargs['pk'], is_active=True)
+        bank = get_object_or_404(Bank, id=self.kwargs['bank_id'], is_active=True)
         return bank.branches.all()
 
 
@@ -25,7 +25,7 @@ class AccountAPI(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
 
     def get_queryset(self):
-        branch = get_object_or_404(Branch, id=self.kwargs['pk'], is_active=True)
+        branch = get_object_or_404(Branch, id=self.kwargs['branch_id'], is_active=True)
         return branch.Accounts.all()
 
 
@@ -34,7 +34,7 @@ class TransactionAPI(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        account = get_object_or_404(Account, id=self.kwargs['pk'])
+        account = get_object_or_404(Account, id=self.kwargs['account_id'])
         return account.transaction_set.filter(is_active=True)
 
     def create(self, request, *args, **kwargs):
