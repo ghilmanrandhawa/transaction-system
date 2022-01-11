@@ -8,6 +8,7 @@ from banks.serializers import BankSerializer, AccountSerializer, BranchSerialize
 
 
 class BankListCreateAPI(ListCreateAPIView):
+
     serializer_class = BankSerializer
     queryset = Bank.objects.filter(is_active=True)
 
